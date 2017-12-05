@@ -51,6 +51,6 @@ func main() {
 	var buf bytes.Buffer
 	t := io.TeeReader(os.Stdin, &buf)
 
-	fmt.Println("numValid:", numValid(t, identity))
+	go fmt.Println("numValid:", numValid(t, identity))
 	fmt.Println("numValidAnagram:", numValid(&buf, canonicalAnagram))
 }
