@@ -8,14 +8,14 @@ import (
 
 type Banks [16]int
 
-func Rebalance(b Banks) int {
-	m := map[Banks]bool{}
+func Rebalance(b Banks) (int, int) {
+	m := map[Banks]int{}
 	n := 0
 	for {
-		if _, ok := m[b]; ok {
-			return n
+		if idx, ok := m[b]; ok {
+			return n, n - idx
 		}
-		m[b] = true
+		m[b] = n
 		n++
 
 		// Find biggest
@@ -51,5 +51,7 @@ func main() {
 	}
 
 	fmt.Println(b)
-	fmt.Println("iterations:", Rebalance(b))
+	n, sz := Rebalance(b)
+	fmt.Println("iterations:", n)
+	fmt.Println("size:", sz)
 }
