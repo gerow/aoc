@@ -17,7 +17,7 @@ func (r *Registers) Read(reg string) int {
 	return 0
 }
 
-func (r *Registers) Inc(tok, reg string, val int) {
+func (r *Registers) Inc(tok, reg string, val int) int {
 	if tok != "inc" && tok != "dec" {
 		panic(tok)
 	}
@@ -30,6 +30,7 @@ func (r *Registers) Inc(tok, reg string, val int) {
 	} else {
 		r.R[reg] = val
 	}
+	return r.R[reg]
 }
 
 func (r *Registers) Condition(reg, cond string, val int) bool {
@@ -66,7 +67,7 @@ func (r *Registers) Largest() int {
 
 func main() {
 	r := Registers{map[string]int{}}
-
+	var largestEver int
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
 		// wReg incTok val if rReg cmpTok cmpVal
@@ -76,8 +77,11 @@ func main() {
 			panic(err)
 		}
 		if r.Condition(rReg, cmpTok, cmpVal) {
-			r.Inc(incTok, wReg, val)
+			if v := r.Inc(incTok, wReg, val); v > largestEver {
+				largestEver = v
+			}
 		}
 	}
 	fmt.Println("largest:", r.Largest())
+	fmt.Println("largestEver:", largestEver)
 }
