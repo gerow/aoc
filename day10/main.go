@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"encoding/hex"
+	"fmt"
+)
 
 type Knot struct {
 	String [256]int
@@ -41,16 +44,44 @@ func (k *Knot) Apply(length int) {
 	k.Skip++
 }
 
+func (k *Knot) Dense() (o [16]byte) {
+	for b := 0; b < 16; b++ {
+		o[b] = byte(k.String[b*16])
+		for i := 1; i < 16; i++ {
+			o[b] ^= byte(k.String[b*16+i])
+		}
+	}
+	return o
+}
+
+func (k *Knot) Hex() string {
+	d := k.Dense()
+	return hex.EncodeToString(d[:])
+}
+
+func Lens(in string) []int {
+	var o []int
+	for _, b := range []byte(in) {
+		o = append(o, int(b))
+	}
+	return append(o, []int{17, 31, 73, 47, 23}...)
+}
+
 func main() {
 	lens := []int{212, 254, 178, 237, 2, 0, 1, 54, 167, 92, 117, 125, 255, 61, 159, 164}
 	k := New()
-	//k.Pos = 255
-	fmt.Println("Before:", k)
 	for _, l := range lens {
-		fmt.Println("Applying", l)
 		k.Apply(l)
-		fmt.Println(k)
 	}
-	fmt.Println("After:", k)
 	fmt.Println("String[0]*String[1]:", k.String[0]*k.String[1])
+
+	k = New()
+	lensStr := "212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164"
+	lens = Lens(lensStr)
+	for i := 0; i < 64; i++ {
+		for _, l := range lens {
+			k.Apply(l)
+		}
+	}
+	fmt.Println(k.Hex())
 }
