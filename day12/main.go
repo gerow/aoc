@@ -31,6 +31,18 @@ func connectedSize(programs map[PID]Program, pid PID, seen map[PID]bool) int {
 	return sum
 }
 
+func Groups(programs map[PID]Program) int {
+	seen := map[PID]bool{}
+	groups := 0
+	for pid, _ := range programs {
+		if _, ok := seen[pid]; !ok {
+			groups++
+			connectedSize(programs, pid, seen)
+		}
+	}
+	return groups
+}
+
 func main() {
 	s := bufio.NewScanner(os.Stdin)
 	programs := map[PID]Program{}
@@ -56,4 +68,5 @@ func main() {
 	}
 
 	fmt.Println("ConnectedSize(0):", ConnectedSize(programs, 0))
+	fmt.Println("Groups:", Groups(programs))
 }
