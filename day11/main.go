@@ -72,9 +72,15 @@ func main() {
 		dirs = append(dirs, StringToDir[d])
 	}
 	var p Pos
+	var largest int
 	for _, d := range dirs {
 		p = p.Move(d)
+		dist := p.Dist()
+		if dist > largest {
+			largest = dist
+		}
 	}
 	fmt.Println(p)
 	fmt.Println("Distance", p.Dist())
+	fmt.Println("Largest distance", largest)
 }
