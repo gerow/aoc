@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+
+	"github.com/gerow/aoc/day10/knot"
 )
 
 type Knot struct {
@@ -74,14 +76,6 @@ func main() {
 		k.Apply(l)
 	}
 	fmt.Println("String[0]*String[1]:", k.String[0]*k.String[1])
-
-	k = New()
-	lensStr := "212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164"
-	lens = Lens(lensStr)
-	for i := 0; i < 64; i++ {
-		for _, l := range lens {
-			k.Apply(l)
-		}
-	}
-	fmt.Println(k.Hex())
+	sum := knot.Sum([]byte("212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164"))
+	fmt.Println(hex.EncodeToString(sum[:]))
 }
