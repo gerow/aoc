@@ -38,6 +38,18 @@ func (ss Scanners) Reset() {
 	}
 }
 
+func Caught(ss Scanners, delay int) bool {
+	for d, s := range ss {
+		if s.Range == 1 {
+			return true
+		}
+		if (delay+int(d))%(2*(s.Range-1)) == 0 {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	scanners := Scanners{}
 	var maxDepth Depth
@@ -64,23 +76,10 @@ func main() {
 	}
 	fmt.Println("Severity:", severity)
 
-	var delay int
-	for ; ; delay++ {
-		scanners.Reset()
-		for n := 0; n < delay; n++ {
-			scanners.Step()
-		}
-		caught := false
-		for d := Depth(0); d <= maxDepth; d++ {
-			if s, ok := scanners[d]; ok && s.Pos == 0 {
-				caught = true
-				break
-			}
-			scanners.Step()
-		}
-		if !caught {
+	for delay := 0; ; delay++ {
+		if !Caught(scanners, delay) {
+			fmt.Println("Minimum delay:", delay)
 			break
 		}
 	}
-	fmt.Println("Minimum delay:", delay)
 }
