@@ -31,13 +31,13 @@ func TestReference(t *testing.T) {
 
 	a := NewA(1092455)
 	b := NewB(430625591)
-	if v := Match(a, b, 40000000); v != 588 {
+	if v := Match(a, b, NormalIterations); v != 588 {
 		t.Errorf("wrong match; want 588 got %v", v)
 	}
 
 	ac := NewAWithCriteria(1092455)
 	bc := NewBWithCriteria(430625591)
-	if v := Match(ac, bc, 5000000); v != 309 {
+	if v := Match(ac, bc, CriteriaIterations); v != 309 {
 		t.Errorf("wrong match; want 309 got %v", v)
 	}
 }

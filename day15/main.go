@@ -2,6 +2,11 @@ package main
 
 import "fmt"
 
+const (
+	NormalIterations   = 40000000
+	CriteriaIterations = 5000000
+)
+
 type Generator struct {
 	factor   int
 	next     int
@@ -52,9 +57,9 @@ func Match(a, b *Generator, trials int) int {
 func main() {
 	a := NewA(516)
 	b := NewB(190)
-	fmt.Println("Matches:", Match(a, b, 40000000))
+	fmt.Println("Matches:", Match(a, b, NormalIterations))
 
 	ac := NewAWithCriteria(516)
 	bc := NewBWithCriteria(190)
-	fmt.Println("Matches with criteria:", Match(ac, bc, 5000000))
+	fmt.Println("Matches with criteria:", Match(ac, bc, CriteriaIterations))
 }
