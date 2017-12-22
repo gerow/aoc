@@ -8,13 +8,6 @@ import (
 	"os"
 )
 
-type State int
-
-const (
-	Normal State = iota
-	InGarbage
-)
-
 func ScanTokens(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	if len(data) == 0 {
 		return 0, nil, nil
