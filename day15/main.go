@@ -3,25 +3,38 @@ package main
 import "fmt"
 
 type Generator struct {
-	factor int
-	next   int
+	factor   int
+	next     int
+	criteria int
 }
 
-func New(factor, next int) *Generator {
-	return &Generator{factor, next}
+func New(factor, next, criteria int) *Generator {
+	return &Generator{factor, next, criteria}
 }
 
 func NewA(next int) *Generator {
-	return New(16807, next)
+	return New(16807, next, 0)
 }
 
 func NewB(next int) *Generator {
-	return New(48271, next)
+	return New(48271, next, 0)
+}
+
+func NewAWithCriteria(next int) *Generator {
+	return New(16807, next, 4)
+}
+
+func NewBWithCriteria(next int) *Generator {
+	return New(48271, next, 8)
 }
 
 func (g *Generator) Next() int {
+again:
 	n := g.next
 	g.next = n * g.factor % 2147483647
+	if g.criteria != 0 && n%g.criteria != 0 {
+		goto again
+	}
 	return n
 }
 
@@ -40,4 +53,8 @@ func main() {
 	a := NewA(516)
 	b := NewB(190)
 	fmt.Println("Matches:", Match(a, b, 40000000))
+
+	ac := NewAWithCriteria(516)
+	bc := NewBWithCriteria(190)
+	fmt.Println("Matches with criteria:", Match(ac, bc, 5000000))
 }
