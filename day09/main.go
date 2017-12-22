@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -18,31 +19,34 @@ func ScanTokens(data []byte, atEOF bool) (advance int, token []byte, err error) 
 	if len(data) == 0 {
 		return 0, nil, nil
 	}
-	b := data[0]
-	if b == '{' || b == '}' || b == ',' {
-		return 1, []byte{b}, nil
+	d := data[0]
+	if d == '{' || d == '}' || d == ',' {
+		return 1, []byte{d}, nil
 	}
-	if b == '<' {
+	if d == '<' {
 		var cancel bool
+		var out []byte
 		for i, d := range data {
-			b = d
-			if b == '>' && !cancel {
-				return i + 1, data[:i+1], nil
+			if d == '>' && !cancel {
+				out = append(out, d)
+				return i + 1, out, nil
 			}
 			if cancel {
 				cancel = false
-			} else if b == '!' {
+			} else if d == '!' {
 				cancel = true
+			} else {
+				out = append(out, d)
 			}
 		}
 		// Need more data to finish garbage.
 		return 0, nil, nil
 	}
 	// Ignore newline.
-	if b == '\n' {
+	if d == '\n' {
 		return 1, nil, nil
 	}
-	return 0, nil, fmt.Errorf("failed to tokenize string beginning with %q", b)
+	return 0, nil, fmt.Errorf("failed to tokenize string beginning with %q", d)
 }
 
 func Score(r io.Reader) int {
@@ -64,6 +68,25 @@ func Score(r io.Reader) int {
 	return score
 }
 
+func GarbageCount(r io.Reader) int {
+	var garbage int
+	s := bufio.NewScanner(r)
+	s.Split(ScanTokens)
+	for s.Scan() {
+		t := s.Text()
+		if t[0] == '<' {
+			garbage += len(t) - 2
+		}
+	}
+	if err := s.Err(); err != nil {
+		panic(err)
+	}
+	return garbage
+}
+
 func main() {
-	fmt.Println("Score:", Score(os.Stdin))
+	var b bytes.Buffer
+	t := io.TeeReader(os.Stdin, &b)
+	fmt.Println("Score:", Score(t))
+	fmt.Println("GarbageCount:", GarbageCount(&b))
 }
