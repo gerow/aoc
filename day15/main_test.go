@@ -21,6 +21,20 @@ func TestReference(t *testing.T) {
 			137874439,
 			285222916,
 		}},
+		{NewAWithCriteria(1092455), []int{
+			1352636452,
+			1992081072,
+			530830436,
+			1980017072,
+			740335192,
+		}},
+		{NewBWithCriteria(430625591), []int{
+			1233683848,
+			862516352,
+			1159784568,
+			1616057672,
+			412269392,
+		}},
 	} {
 		for i, expected := range gt.expected {
 			if actual := gt.g.Next(); actual != expected {
