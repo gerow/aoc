@@ -43,15 +43,22 @@ func TestReference(t *testing.T) {
 		}
 	}
 
-	a := NewA(1092455)
-	b := NewB(430625591)
-	if v := Match(a, b, NormalIterations); v != 588 {
-		t.Errorf("wrong match; want 588 got %v", v)
-	}
+	for _, mt := range []struct {
+		sa, sb, match, criteria int
+	}{
+		{1092455, 430625591, 588, 309},
+		{516, 190, 597, 303},
+	} {
+		a := NewA(mt.sa)
+		b := NewB(mt.sb)
+		if v := Match(a, b, NormalIterations); v != mt.match {
+			t.Errorf("wrong match for (%d, %d); want %d got %d", mt.sa, mt.sb, mt.match, v)
+		}
 
-	ac := NewAWithCriteria(1092455)
-	bc := NewBWithCriteria(430625591)
-	if v := Match(ac, bc, CriteriaIterations); v != 309 {
-		t.Errorf("wrong match; want 309 got %v", v)
+		ac := NewAWithCriteria(mt.sa)
+		bc := NewBWithCriteria(mt.sb)
+		if v := Match(ac, bc, CriteriaIterations); v != mt.criteria {
+			t.Errorf("wrong criteria match for (%d, %d); want %d got %d", mt.sa, mt.sb, mt.criteria, v)
+		}
 	}
 }
