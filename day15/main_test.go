@@ -7,28 +7,28 @@ func TestReference(t *testing.T) {
 		g        *Generator
 		expected []int
 	}{
-		{NewA(1092455), []int{
+		{NewA(65), []int{
 			1092455,
 			1181022009,
 			245556042,
 			1744312007,
 			1352636452,
 		}},
-		{NewB(430625591), []int{
+		{NewB(8921), []int{
 			430625591,
 			1233683848,
 			1431495498,
 			137874439,
 			285222916,
 		}},
-		{NewAWithCriteria(1092455), []int{
+		{NewAWithCriteria(65), []int{
 			1352636452,
 			1992081072,
 			530830436,
 			1980017072,
 			740335192,
 		}},
-		{NewBWithCriteria(430625591), []int{
+		{NewBWithCriteria(8921), []int{
 			1233683848,
 			862516352,
 			1159784568,
@@ -46,7 +46,7 @@ func TestReference(t *testing.T) {
 	for _, mt := range []struct {
 		sa, sb, match, criteria int
 	}{
-		{1092455, 430625591, 588, 309},
+		{65, 8921, 588, 309},
 		{516, 190, 597, 303},
 	} {
 		a := NewA(mt.sa)

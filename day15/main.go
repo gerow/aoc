@@ -9,38 +9,37 @@ const (
 
 type Generator struct {
 	factor   int
-	next     int
+	last     int
 	criteria int
 }
 
-func New(factor, next, criteria int) *Generator {
-	return &Generator{factor, next, criteria}
+func New(factor, last, criteria int) *Generator {
+	return &Generator{factor, last, criteria}
 }
 
-func NewA(next int) *Generator {
-	return New(16807, next, 0)
+func NewA(last int) *Generator {
+	return New(16807, last, 0)
 }
 
-func NewB(next int) *Generator {
-	return New(48271, next, 0)
+func NewB(last int) *Generator {
+	return New(48271, last, 0)
 }
 
-func NewAWithCriteria(next int) *Generator {
-	return New(16807, next, 4)
+func NewAWithCriteria(last int) *Generator {
+	return New(16807, last, 4)
 }
 
-func NewBWithCriteria(next int) *Generator {
-	return New(48271, next, 8)
+func NewBWithCriteria(last int) *Generator {
+	return New(48271, last, 8)
 }
 
 func (g *Generator) Next() int {
 again:
-	n := g.next
-	g.next = n * g.factor % 2147483647
-	if g.criteria != 0 && n%g.criteria != 0 {
+	g.last = g.last * g.factor % 2147483647
+	if g.criteria != 0 && g.last%g.criteria != 0 {
 		goto again
 	}
-	return n
+	return g.last
 }
 
 func Match(a, b *Generator, trials int) int {
