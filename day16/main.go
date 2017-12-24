@@ -143,8 +143,15 @@ func main() {
 	fmt.Printf("end state: %q\n", string(s.Programs))
 
 	s = New(16)
-	for n := 0; n < 50000; n++ {
+	seen := map[string]string{}
+	for n := 0; n < 1000000000; n++ {
+		before := string(s.Programs)
+		if after, ok := seen[before]; ok {
+			s.Programs = []byte(after)
+			continue
+		}
 		s.ApplyMoves(moves)
+		seen[before] = string(s.Programs)
 	}
 	fmt.Printf("end state after 1b: %q\n", string(s.Programs))
 }
