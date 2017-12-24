@@ -2,10 +2,17 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"os"
+	"runtime/pprof"
 )
+
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 func ScanCommas(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	for i := 0; i < len(data); i++ {
@@ -90,7 +97,29 @@ func (s *State) partner(a, b byte) {
 }
 
 func main() {
+	flag.Parse()
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+
+	in, err := ioutil.ReadAll(os.Stdin)
+	if err != nil {
+		panic(err)
+	}
 	s := New(16)
-	s.Apply(os.Stdin)
+	buf := bytes.NewReader(in)
+	s.Apply(buf)
 	fmt.Printf("end state: %q\n", string(s.Programs))
+
+	s = New(16)
+	for n := 0; n < 2000; n++ {
+		buf.Reset(in)
+		s.Apply(buf)
+	}
+	fmt.Printf("end state after 1b: %q\n", string(s.Programs))
 }
