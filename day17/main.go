@@ -19,6 +19,19 @@ func AfterLast(step int) int {
 	return r.Next().Value.(int)
 }
 
+func AfterZero(step int) int {
+	var i, afterZero int
+	for n := 1; n < 50000001; n++ {
+		i = (i + step) % n
+		if i == 0 {
+			afterZero = n
+		}
+		i++
+	}
+	return afterZero
+}
+
 func main() {
 	fmt.Println("Value after last:", AfterLast(355))
+	fmt.Println("Value after zero:", AfterZero(355))
 }

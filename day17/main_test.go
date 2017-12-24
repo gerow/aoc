@@ -9,6 +9,7 @@ func TestReference(t *testing.T) {
 		step, want int
 	}{
 		{3, 638},
+		{355, 1912},
 	} {
 		if got := AfterLast(rt.step); got != rt.want {
 			t.Errorf("wrong AfterLast for %d: got %d want %d", rt.step, got, rt.want)
