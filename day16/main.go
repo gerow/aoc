@@ -2,11 +2,9 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"runtime/pprof"
@@ -31,6 +29,56 @@ type State struct {
 	Programs []byte
 }
 
+type MoveType int
+
+const (
+	Spin MoveType = iota
+	Exchange
+	Partner
+)
+
+type Move struct {
+	Type                 MoveType
+	SpinSize             int
+	ExchangeA, ExchangeB int
+	PartnerA, PartnerB   byte
+}
+
+func NewMove(m string) *Move {
+	switch m[0] {
+	case 's':
+		var s int
+		fmt.Sscanf(m, "s%d", &s)
+		return &Move{Type: Spin, SpinSize: s}
+	case 'x':
+		var a, b int
+		fmt.Sscanf(m, "x%d/%d", &a, &b)
+		return &Move{Type: Exchange, ExchangeA: a, ExchangeB: b}
+	case 'p':
+		var a, b byte
+		fmt.Sscanf(m, "p%c/%c", &a, &b)
+		return &Move{Type: Partner, PartnerA: a, PartnerB: b}
+	default:
+		panic(m)
+	}
+}
+
+func ParseMoves(r io.Reader) []Move {
+	scanner := bufio.NewScanner(r)
+	scanner.Split(ScanCommas)
+	var out []Move
+	for scanner.Scan() {
+		if scanner.Text() == "" {
+			continue
+		}
+		out = append(out, *NewMove(scanner.Text()))
+	}
+	if scanner.Err() != nil {
+		panic(scanner.Err())
+	}
+	return out
+}
+
 func New(n int) *State {
 	var s State
 	s.Programs = make([]byte, n)
@@ -40,34 +88,16 @@ func New(n int) *State {
 	return &s
 }
 
-func (s *State) Apply(r io.Reader) {
-	scanner := bufio.NewScanner(r)
-	scanner.Split(ScanCommas)
-
-	for scanner.Scan() {
-		t := scanner.Text()
-		if t == "" {
-			continue
+func (s *State) ApplyMoves(moves []Move) {
+	for _, m := range moves {
+		switch m.Type {
+		case Spin:
+			s.spin(m.SpinSize)
+		case Exchange:
+			s.exchange(m.ExchangeA, m.ExchangeB)
+		case Partner:
+			s.partner(m.PartnerA, m.PartnerB)
 		}
-		switch t[0] {
-		case 's':
-			var n int
-			fmt.Sscanf(t, "s%d", &n)
-			s.spin(n)
-		case 'x':
-			var a, b int
-			fmt.Sscanf(t, "x%d/%d", &a, &b)
-			s.exchange(a, b)
-		case 'p':
-			var a, b byte
-			fmt.Sscanf(t, "p%c/%c", &a, &b)
-			s.partner(a, b)
-		default:
-			panic(t)
-		}
-	}
-	if scanner.Err() != nil {
-		panic(scanner.Err())
 	}
 }
 
@@ -107,19 +137,14 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
-	in, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
-		panic(err)
-	}
+	moves := ParseMoves(os.Stdin)
 	s := New(16)
-	buf := bytes.NewReader(in)
-	s.Apply(buf)
+	s.ApplyMoves(moves)
 	fmt.Printf("end state: %q\n", string(s.Programs))
 
 	s = New(16)
-	for n := 0; n < 2000; n++ {
-		buf.Reset(in)
-		s.Apply(buf)
+	for n := 0; n < 50000; n++ {
+		s.ApplyMoves(moves)
 	}
 	fmt.Printf("end state after 1b: %q\n", string(s.Programs))
 }

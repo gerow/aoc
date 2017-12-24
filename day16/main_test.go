@@ -42,7 +42,8 @@ func TestReference(t *testing.T) {
 	} {
 		s := New(len(rt.want))
 		r := strings.NewReader(rt.moves)
-		s.Apply(r)
+		moves := ParseMoves(r)
+		s.ApplyMoves(moves)
 		if got := string(s.Programs); got != rt.want {
 			t.Errorf("wrong result for moves %q; want %q got %q", rt.moves, rt.want, got)
 		}
