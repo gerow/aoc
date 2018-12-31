@@ -10,9 +10,6 @@ import (
 func popCnt(s string) map[rune]int64 {
 	pop := make(map[rune]int64)
 	for _, r := range s {
-		if _, ok := pop[r]; !ok {
-			pop[r] = 0
-		}
 		pop[r] += 1
 	}
 	return pop
