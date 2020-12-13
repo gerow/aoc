@@ -31,6 +31,9 @@ func main() {
 		}
 		nums = append(nums, n1)
 	}
+	if err := s.Err(); err != nil {
+		log.Fatal(err)
+	}
 
 	log.Fatalf("failed to find triplet that sums to 2020")
 }

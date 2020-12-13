@@ -96,8 +96,8 @@ func main() {
 			valid += 1
 		}
 	}
-	if s.Err() != nil {
-		log.Fatal(s.Err())
+	if err := s.Err(); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Println(valid)

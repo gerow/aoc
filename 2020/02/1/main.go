@@ -52,6 +52,9 @@ func main() {
 			valid += 1
 		}
 	}
+	if err := s.Err(); err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println(valid)
 }

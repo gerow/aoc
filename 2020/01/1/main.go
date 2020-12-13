@@ -25,6 +25,9 @@ func main() {
 		}
 		nums = append(nums, n)
 	}
+	if err := s.Err(); err != nil {
+		log.Fatal(err)
+	}
 
 	log.Fatalf("failed to find pair that sums to 2020")
 }

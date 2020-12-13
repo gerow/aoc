@@ -66,6 +66,9 @@ func newGrid(r io.Reader) (*grid, error) {
 			return nil, fmt.Errorf("malformed grid, 1st line had width %d, %dth line had width %d", g.width, g.height, l)
 		}
 	}
+	if err := s.Err(); err != nil {
+		log.Fatal(err)
+	}
 
 	return &g, nil
 }
