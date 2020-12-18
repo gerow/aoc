@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -13,19 +14,19 @@ func main() {
 	for s.Scan() {
 		if s.Text() == "" {
 			// reached the end of a group. Count, reset, continue.
-			for range yes {
-				sum++
-			}
+			sum += len(yes)
 			yes = make(map[rune]bool)
+			continue
 		}
 		for _, r := range s.Text() {
 			yes[r] = true
 		}
 	}
-	// need to count the last group
-	for range yes {
-		sum++
+	if err := s.Err(); err != nil {
+		log.Fatal(err)
 	}
+	// need to count the last group
+	sum += len(yes)
 
 	fmt.Println(sum)
 }
