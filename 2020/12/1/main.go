@@ -1,5 +1,10 @@
 package main
 
+// This code is extrememly broken in a bunch of different ways. It
+// overcomplicates rotations, but also just doesn't really handle rotations
+// *at all* since we never set the direction at the beginning. Yet somehow
+// it produced the right answer. Don't ask me.
+
 import (
 	"bufio"
 	"fmt"
