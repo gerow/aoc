@@ -1,11 +1,11 @@
-use std::collections::VecDeque;
+use circular_queue::CircularQueue;
 use std::error::Error;
 use std::fs::File;
 use std::io;
 use std::io::BufRead;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut window = VecDeque::<i32>::new();
+    let mut window = CircularQueue::with_capacity(3);
     let mut increased = 0;
     let mut first = true;
     let mut prev = 0;
@@ -14,11 +14,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     for l in f.lines() {
         let l = l?;
         let n = l.parse::<i32>()?;
-        window.push_front(n);
+        window.push(n);
         if window.len() < 3 {
             continue;
-        } else if window.len() > 3 {
-            window.pop_back();
         }
         let sum = window.iter().sum();
         if first {
