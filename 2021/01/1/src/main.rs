@@ -1,6 +1,6 @@
-use std::io::BufRead;
 use std::error::Error;
 use std::io;
+use std::io::BufRead;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut increased = 0;
